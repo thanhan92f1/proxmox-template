@@ -1,0 +1,129 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build and publish release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+
+          git init .
+          git config --global --add safe.directory "${GITHUB_WORKSPACE}"
+          git remote add origin "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          git fetch --force --tags --prune origin \
+            "+refs/heads/*:refs/remotes/origin/*" \
+            "+refs/tags/*:refs/tags/*"
+          git checkout --force "${GITHUB_REF_NAME}^{commit}"
+
+      - name: Setup Go
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if ! command -v go >/dev/null 2>&1; then
+            curl -fsSL https://go.dev/dl/go1.22.12.linux-amd64.tar.gz -o /tmp/go.tgz
+            sudo rm -rf /usr/local/go
+            sudo tar -C /usr/local -xzf /tmp/go.tgz
+            echo "/usr/local/go/bin" >> "${GITHUB_PATH}"
+            export PATH="/usr/local/go/bin:${PATH}"
+          fi
+
+          go version
+
+      - name: Test
+        run: go test ./...
+
+      - name: Build Linux binaries
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          mkdir -p dist
+          VERSION="${GITHUB_REF_NAME}"
+          COMMIT="$(git rev-parse --short HEAD)"
+          LDFLAGS="-s -w -X main.version=${VERSION} -X main.commit=${COMMIT}"
+
+          for arch in amd64 arm64; do
+            echo "Building linux/${arch}..."
+            CGO_ENABLED=0 GOOS=linux GOARCH="${arch}" \
+              go build -trimpath -ldflags "${LDFLAGS}" \
+              -o "dist/proxmox-agent-linux-${arch}" ./cmd/agent
+          done
+
+      - name: Generate checksums
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd dist
+          sha256sum proxmox-agent-linux-* > SHA256SUMS.txt
+          cat SHA256SUMS.txt
+
+      - name: Generate release notes
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          TAG="${GITHUB_REF_NAME}"
+          PREVIOUS_TAG="$(git describe --tags --abbrev=0 "${TAG}^" 2>/dev/null || true)"
+
+          if [ -f CHANGELOG.md ]; then
+            awk -v tag="${TAG}" '
+              $0 ~ "^##[[:space:]]+" tag "([[:space:]-]|$)" { found=1; next }
+              found && /^##[[:space:]]+v[0-9]+\.[0-9]+\.[0-9]+/ { exit }
+              found { print }
+            ' CHANGELOG.md > release-notes.md
+          fi
+
+          if [ ! -s release-notes.md ]; then
+            echo "Release ${TAG}" > release-notes.md
+          fi
+
+          {
+            echo
+            echo "## Assets"
+            while read -r sum file; do
+              echo "- \`${file}\` sha256:\`${sum}\`"
+            done < dist/SHA256SUMS.txt
+
+            if [ -n "${PREVIOUS_TAG}" ]; then
+              echo
+              echo "Full Changelog: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/compare/${PREVIOUS_TAG}...${TAG}"
+            fi
+          } >> release-notes.md
+
+          cat release-notes.md
+
+      - name: Publish GitHub release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+
+          TAG="${GITHUB_REF_NAME}"
+          ASSETS=(
+            dist/proxmox-agent-linux-amd64
+            dist/proxmox-agent-linux-arm64
+            dist/SHA256SUMS.txt
+          )
+
+          if gh release view "${TAG}" >/dev/null 2>&1; then
+            gh release upload "${TAG}" "${ASSETS[@]}" --clobber
+            gh release edit "${TAG}" --title "${TAG}" --notes-file release-notes.md --latest
+          else
+            gh release create "${TAG}" "${ASSETS[@]}" --title "${TAG}" --notes-file release-notes.md --latest
+          fi

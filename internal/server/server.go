@@ -143,7 +143,7 @@ func (s *Server) handleProvision(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Query().Get("async") == "true" {
 		go func() {
 			result, _ := s.exec.Run(task)
-			if result != nil && result.Status == reporter.StatusSuccess {
+			if shouldAutoDisableAfterProvision(result) {
 				s.autoDisableIfNeeded()
 			}
 		}()
@@ -168,9 +168,13 @@ func (s *Server) handleProvision(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, code, result)
 
 	// Auto-disable after sync provision
-	if result.Status == reporter.StatusSuccess {
+	if shouldAutoDisableAfterProvision(result) {
 		go s.autoDisableIfNeeded()
 	}
+}
+
+func shouldAutoDisableAfterProvision(result *executor.TaskResult) bool {
+	return result != nil && result.Status == reporter.StatusSuccess
 }
 
 // autoDisableIfNeeded stops and disables the agent systemd service after successful provision
