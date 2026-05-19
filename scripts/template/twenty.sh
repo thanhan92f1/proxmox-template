@@ -16,7 +16,7 @@
 set -euo pipefail
 
 # ─── Logging (when running manually) ─────────────────────────────────────────
-LOG_FILE="/var/log/tino-template.log"
+LOG_FILE="/var/log/hitechcloud-template.log"
 START_TIME=$(date +%s)
 exec > >(tee -a "${LOG_FILE}") 2>&1
 echo "=== $(basename "$0") started at $(date) ==="
