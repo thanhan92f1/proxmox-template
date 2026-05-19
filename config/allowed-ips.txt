@@ -3,9 +3,5 @@
 # Edit this file on GitHub — agents will auto-fetch every 5 minutes.
 
 # Management server
-103.130.216.137
-103.130.216.58
-103.241.42.10
-103.130.216.5
-103.241.43.235
-103.130.217.10
+10.0.0.x
+10.0.0.x
