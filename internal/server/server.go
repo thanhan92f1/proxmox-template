@@ -8,9 +8,9 @@ import (
 	"os"
 	"time"
 
-	"github.com/hitechcloud-vietnam/proxmox-template/internal/config"
-	"github.com/hitechcloud-vietnam/proxmox-template/internal/executor"
-	"github.com/hitechcloud-vietnam/proxmox-template/internal/reporter"
+	"github.com/thanhan92f1/proxmox-template/internal/config"
+	"github.com/thanhan92f1/proxmox-template/internal/executor"
+	"github.com/thanhan92f1/proxmox-template/internal/reporter"
 )
 
 type Server struct {

@@ -19,7 +19,7 @@ set -euo pipefail
 
 AGENT_VERSION="${AGENT_VERSION:-latest}"
 AGENT_PORT="${AGENT_PORT:-8080}"
-AGENT_BASE_URL="${AGENT_BASE_URL:-https://github.com/hitechcloud-vietnam/proxmox-template/releases}"
+AGENT_BASE_URL="${AGENT_BASE_URL:-https://github.com/thanhan92f1/proxmox-template/releases}"
 ALLOWED_IPS="${ALLOWED_IPS:-}"
 ALLOWED_IPS_URL="${ALLOWED_IPS_URL:-}"
 ALLOWED_SCRIPTS="${ALLOWED_SCRIPTS:-}"

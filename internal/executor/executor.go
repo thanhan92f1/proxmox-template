@@ -11,7 +11,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/hitechcloud-vietnam/proxmox-template/internal/reporter"
+	"github.com/thanhan92f1/proxmox-template/internal/reporter"
 )
 
 type TaskStatus string

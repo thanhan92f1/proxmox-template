@@ -34,7 +34,7 @@ Lightweight Go agent that runs inside Proxmox VMs. Listens on port 8080, downloa
 ### Install manually
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/hitechcloud-vietnam/proxmox-template/main/scripts/install-agent.sh | \
+curl -fsSL https://raw.githubusercontent.com/thanhan92f1/proxmox-template/main/scripts/install-agent.sh | \
   AGENT_VERSION="latest" ALLOWED_IPS="YOUR_IP" AUTO_DISABLE="true" bash
 ```
 
@@ -74,7 +74,7 @@ Execute a provisioning script — **IP filtered**.
 curl -X POST http://VM_IP:8080/provision \
   -H "Content-Type: application/json" \
   -d '{
-    "script_url": "https://raw.githubusercontent.com/hitechcloud-vietnam/proxmox-template/main/scripts/template/wordpress.sh",
+    "script_url": "https://raw.githubusercontent.com/thanhan92f1/proxmox-template/main/scripts/template/wordpress.sh",
     "domain": "app.example.com",
     "env": {
       "DB_NAME": "mydb",
@@ -119,8 +119,8 @@ Three layers, configured via `/etc/proxmox-agent/config.json`:
 ```json
 {
   "allowed_ips": ["103.130.216.137"],
-  "allowed_ips_url": "https://raw.githubusercontent.com/hitechcloud-vietnam/proxmox-template/main/config/allowed-ips.txt",
-  "allowed_script_prefixes": ["https://raw.githubusercontent.com/hitechcloud-vietnam/proxmox-template/"],
+  "allowed_ips_url": "https://raw.githubusercontent.com/thanhan92f1/proxmox-template/main/config/allowed-ips.txt",
+  "allowed_script_prefixes": ["https://raw.githubusercontent.com/thanhan92f1/proxmox-template/"],
   "auto_disable": true
 }
 ```
@@ -224,7 +224,7 @@ POST /provision
 curl -X POST http://VM_IP:8080/provision \
   -H "Content-Type: application/json" \
   -d '{
-    "script_url": "https://raw.githubusercontent.com/hitechcloud-vietnam/proxmox-template/main/scripts/template/wordpress.sh",
+    "script_url": "https://raw.githubusercontent.com/thanhan92f1/proxmox-template/main/scripts/template/wordpress.sh",
     "domain": "blog.example.com"
   }'
 
@@ -232,7 +232,7 @@ curl -X POST http://VM_IP:8080/provision \
 curl -X POST "http://VM_IP:8080/provision?async=true" \
   -H "Content-Type: application/json" \
   -d '{
-    "script_url": "https://raw.githubusercontent.com/hitechcloud-vietnam/proxmox-template/main/scripts/panel/1panel.sh",
+    "script_url": "https://raw.githubusercontent.com/thanhan92f1/proxmox-template/main/scripts/panel/1panel.sh",
     "domain": "panel.example.com"
   }'
 ```

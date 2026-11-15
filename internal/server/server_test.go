@@ -3,8 +3,8 @@ package server
 import (
 	"testing"
 
-	"github.com/hitechcloud-vietnam/proxmox-template/internal/executor"
-	"github.com/hitechcloud-vietnam/proxmox-template/internal/reporter"
+	"github.com/thanhan92f1/proxmox-template/internal/executor"
+	"github.com/thanhan92f1/proxmox-template/internal/reporter"
 )
 
 func TestShouldAutoDisableAfterProvision(t *testing.T) {

@@ -21,7 +21,7 @@ run:
 test-provision:
 	curl -s -X POST http://localhost:8080/provision \
 		-H "Content-Type: application/json" \
-		-d '{"script_url": "https://raw.githubusercontent.com/hitechcloud-vietnam/proxmox-template/main/scripts/examples/docker.sh"}' | jq .
+		-d '{"script_url": "https://raw.githubusercontent.com/thanhan92f1/proxmox-template/main/scripts/examples/docker.sh"}' | jq .
 
 # Test health
 test-health:
@@ -31,7 +31,7 @@ test-health:
 test-async:
 	curl -s -X POST "http://localhost:8080/provision?async=true" \
 		-H "Content-Type: application/json" \
-		-d '{"script_url": "https://raw.githubusercontent.com/hitechcloud-vietnam/proxmox-template/main/scripts/examples/docker.sh", "callback_url": "https://api.example.com/callback"}' | jq .
+		-d '{"script_url": "https://raw.githubusercontent.com/thanhan92f1/proxmox-template/main/scripts/examples/docker.sh", "callback_url": "https://api.example.com/callback"}' | jq .
 
 clean:
 	rm -rf bin/
